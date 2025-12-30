@@ -20,15 +20,9 @@ st.title("💹 MyBestBroker")
 st.markdown("""
 ### Confronta le commissioni di trading dei tuoi broker
 
-**MyBestBroker** è uno strumento di **confronto** che ti permette di analizzare  
-le **commissioni di trading** applicate da diversi broker o banche in base a:
+**MyBestBroker** è uno strumento di **confronto** che ti permette di analizzare le **commissioni di trading** applicate da diversi broker o banche in base a: importo dell’operazione, asset class, struttura delle commissioni (minimo, percentuale, massimo) e operatività stimata su base annua.
 
-- importo dell’operazione  
-- asset class  
-- struttura delle commissioni (minimo, percentuale, massimo)  
-- operatività stimata su base annua  
-
-#### 🔍 Come utilizzarlo
+#### 🔍 Istruzioni per l'uso
 1. Inserisci l’**importo medio** delle tue operazioni  
 2. Seleziona un’**asset class**  
 3. Configura uno o più **broker/banca** (puoi aggiungerli o rimuoverli)  
@@ -37,7 +31,8 @@ le **commissioni di trading** applicate da diversi broker o banche in base a:
    - 🥇 il confronto sul singolo trade  
    - 📊 le fasce di convenienza  
    - 📈 l’andamento dei costi  
-   - 📅 il **Consigliatore annuale** per stimare il costo totale annuo  
+   - 📅 il **Consigliatore annuale** per stimare il costo totale annuo        
+
 """)
 
 # ====================================================
@@ -80,7 +75,19 @@ if "brokers_config" not in st.session_state:
 # ====================================================
 # 🔧 SIDEBAR – INPUT PRINCIPALI
 # ====================================================
-
+# st.sidebar.markdown("""
+# # 🔍 Istruzioni per l'uso
+# 1. Inserisci l’**importo medio** delle tue operazioni  
+# 2. Seleziona un’**asset class**  
+# 3. Configura uno o più **broker/banca** (puoi aggiungerli o rimuoverli)  
+# 4. Inserisci le **commissioni** per ciascun broker  
+# 5. Analizza:
+#    - 🥇 il confronto sul singolo trade  
+#    - 📊 le fasce di convenienza  
+#    - 📈 l’andamento dei costi  
+#    - 📅 il **Consigliatore annuale** per stimare il costo totale annuo
+# """)
+# st.sidebar.markdown("---")
 st.sidebar.header("💶 Importo medio delle tue transazioni (€)")
 importo_medio = st.sidebar.number_input(
     "Inserisci l’importo medio",
@@ -369,7 +376,7 @@ for asset in ASSET_CLASSES:
 
 annual_results = []
 
-for broker_id, broker_data in st.session_state.brokers_config.items():
+for idx, (broker_id, broker_data) in enumerate(st.session_state.brokers_config.items()):
     totale = 0
 
     for asset, plan in annual_plan.items():
@@ -387,10 +394,12 @@ for broker_id, broker_data in st.session_state.brokers_config.items():
 
         totale += costo_singola * plan["ops"]
 
+    # Usa il nome personalizzato preso dalla lista 'brokers'
     annual_results.append({
-        "Broker/Banca": broker_id,
+        "Broker/Banca": brokers[idx]["nome"],
         "Costo annuo stimato (€)": round(totale, 2)
     })
+
 
 annual_df = pd.DataFrame(annual_results).sort_values(
     "Costo annuo stimato (€)"
